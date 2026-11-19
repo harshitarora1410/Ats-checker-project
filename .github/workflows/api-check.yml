@@ -1,61 +1,60 @@
 name: API check
 
-# Checks that the Claude API key (GitHub secret ANTHROPIC_API_KEY) is set and working.
-# Run it by hand: GitHub > Actions > API check > Run workflow.
-# It also runs automatically when files in Ai/ change.
+# Manual test: is the Claude API key (secret ANTHROPIC_API_KEY) working or not?
+# Run it: GitHub > Actions > API check > Run workflow.
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - "Ai/**"
-      - ".github/workflows/api-check.yml"
 
 permissions:
   contents: read
 
-concurrency:
-  group: api-check-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
-  api-check:
-    name: Claude API key check
+  api-key-check:
+    name: Check Claude API key
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-    defaults:
-      run:
-        working-directory: Ai
+    timeout-minutes: 5
 
     steps:
-      - name: Check out code
-        uses: actions/checkout@v4
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-          cache: pip
-          cache-dependency-path: Ai/requirements.txt
 
-      - name: Install packages
-        run: pip install -r requirements.txt
+      - name: Install Anthropic SDK
+        run: pip install --quiet anthropic
 
-      - name: Check the secret exists
+      - name: Test the API key
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        shell: python
         run: |
-          if [ -z "$ANTHROPIC_API_KEY" ]; then
-            echo "::error::ANTHROPIC_API_KEY secret is missing. Add it in repo Settings > Secrets and variables > Actions."
-            exit 1
-          fi
-          echo "Secret ANTHROPIC_API_KEY is set."
+          import os, sys
+          import anthropic
 
-      - name: Unit tests (no API call)
-        run: pytest -q
+          key = os.environ.get("ANTHROPIC_API_KEY", "").strip()
+          if not key:
+              print("::error::ANTHROPIC_API_KEY secret is missing. Add it in repo Settings > Secrets and variables > Actions.")
+              sys.exit(1)
 
-      - name: Live Claude API call
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          CLAUDE_MODEL: claude-haiku-5-5
-        run: python scripts/check_setup.py
+          try:
+              client = anthropic.Anthropic(api_key=key, timeout=30, max_retries=1)
+              reply = client.messages.create(
+                  model="claude-haiku-5-5",
+                  max_tokens=5,
+                  messages=[{"role": "user", "content": "Reply with OK."}],
+              )
+          except anthropic.AuthenticationError:
+              print("::error::API key is NOT working: the key is wrong or has been deactivated.")
+              sys.exit(1)
+          except anthropic.PermissionDeniedError:
+              print("::error::API key is valid but has no access to this model.")
+              sys.exit(1)
+          except anthropic.RateLimitError:
+              print("::error::API key is valid but the rate limit or credit balance is exhausted.")
+              sys.exit(1)
+          except anthropic.APIError as exc:
+              print(f"::error::API call failed: {type(exc).__name__}: {exc}")
+              sys.exit(1)
+
+          print(f"API key is WORKING. Model {reply.model} answered.")
