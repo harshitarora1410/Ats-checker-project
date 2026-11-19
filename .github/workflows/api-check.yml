@@ -1,0 +1,61 @@
+name: API check
+
+# Checks that the Claude API key (GitHub secret ANTHROPIC_API_KEY) is set and working.
+# Run it by hand: GitHub > Actions > API check > Run workflow.
+# It also runs automatically when files in Ai/ change.
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "Ai/**"
+      - ".github/workflows/api-check.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: api-check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  api-check:
+    name: Claude API key check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: Ai
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: Ai/requirements.txt
+
+      - name: Install packages
+        run: pip install -r requirements.txt
+
+      - name: Check the secret exists
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ -z "$ANTHROPIC_API_KEY" ]; then
+            echo "::error::ANTHROPIC_API_KEY secret is missing. Add it in repo Settings > Secrets and variables > Actions."
+            exit 1
+          fi
+          echo "Secret ANTHROPIC_API_KEY is set."
+
+      - name: Unit tests (no API call)
+        run: pytest -q
+
+      - name: Live Claude API call
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          CLAUDE_MODEL: claude-haiku-5-5
+        run: python scripts/check_setup.py
