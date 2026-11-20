@@ -1,0 +1,37 @@
+# Dataset manifest - one per dataset. Safe to commit: NO resume text, NO personal data here.
+name: Candidate Matching
+slot: candidate_matching                   # which model slot this dataset trains
+task_output: "Relevance score or ranking (only if relevance labels exist)"
+base_model: "Sentence Transformer or cross-encoder"
+eval_metrics: "NDCG@10, Precision@K, Recall@K"
+
+source:
+  provider: null               # e.g. Kaggle, Hugging Face, internal
+  url: null
+  license: null                # MUST be filled and checked before training
+  downloaded_at: null          # YYYY-MM-DD
+  raw_files: []                # file names inside datasets/raw/candidate_matching/
+  sha256: {}                   # file name -> checksum, to detect changes
+
+contents:
+  expected_records: 10000
+  actual_records: null
+  columns: []                  # column names after inspection
+  label_column: null
+  label_values: []             # e.g. [Good Fit, Potential Fit, No Fit]
+  class_balance: {}            # label -> count
+
+cleaning:
+  duplicates_removed: null
+  pii_redacted: false          # emails, phones, addresses removed before training
+  empty_or_broken_removed: null
+
+splits:                        # grouped by candidate/resume to avoid leakage
+  method: null                 # e.g. group_shuffle_split by resume_id
+  seed: 42
+  train: null
+  val: null
+  test: null
+
+status: not_downloaded         # not_downloaded | raw | cleaned | split | used_for_training
+notes: "Check first that the data has relevance/ranking labels. Category labels alone cannot train a ranking model."
