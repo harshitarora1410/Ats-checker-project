@@ -1,5 +1,5 @@
-"""Provider interface. Every LLM (Claude now, Gemini later) implements this, so the agent never
-depends on one vendor's SDK."""
+"""Provider interface. ClaudeProvider implements it; tests use a fake. Keeps the agent independent
+of the SDK details."""
 
 from __future__ import annotations
 
