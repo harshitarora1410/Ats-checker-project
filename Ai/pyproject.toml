@@ -1,0 +1,12 @@
+[project]
+name = "ats-ai"
+version = "0.1.0"
+description = "AI scoring engine for the Algoworks ATS checker"
+requires-python = ">=3.11"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["ats_ai*"]
