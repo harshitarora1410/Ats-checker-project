@@ -1,5 +1,5 @@
 from .config import Settings
-from .schemas import ScoreResult, SectionScore
-from .scorer import ScoringError, score
+from .errors import AtsAiError, ConfigError, RequestError
+from .scorer import analyze
 
-__all__ = ["Settings", "ScoreResult", "SectionScore", "ScoringError", "score"]
+__all__ = ["analyze", "Settings", "AtsAiError", "ConfigError", "RequestError"]

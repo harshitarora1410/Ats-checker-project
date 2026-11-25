@@ -4,12 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ats-ai"
-version = "0.1.0"
+version = "0.2.0"
 description = "LLM scoring engine for the ATS Score Checker"
 requires-python = ">=3.11"
 dependencies = [
-    "pydantic>=2.5",
     "anthropic>=0.40",
+    "pydantic>=2.7",
+    "python-dotenv>=1.0",
 ]
 
 [project.optional-dependencies]
@@ -20,3 +21,4 @@ include = ["ats_ai*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["."]
