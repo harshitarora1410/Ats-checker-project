@@ -9,12 +9,13 @@ import MainPage from "./components/MainPage/MainPage";
 
 function App() {
   return (
+    // Routes
     <>
-      {/* <Navbar />
-      <MainPage /> */}
-      <MainAuthPage
+      <Navbar />
+      <MainPage />
+      {/* <MainAuthPage
         onLoginSuccess={(user) => console.log("Logged in:", user)}
-      />
+      /> */}
     </>
   );
 }
