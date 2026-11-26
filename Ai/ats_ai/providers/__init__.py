@@ -1,14 +1,13 @@
-"""Claude provider."""
-
 from __future__ import annotations
 
-from ats_ai.config import Settings, get_settings
-from ats_ai.providers.base import LLMError, LLMProvider
+from ..config import Settings
+from .base import BaseProvider, ProviderError
+from .claude_provider import ClaudeProvider
 
-__all__ = ["LLMError", "LLMProvider", "get_provider"]
+
+def get_provider(settings: Settings) -> BaseProvider:
+    """Claude is the only provider in this project."""
+    return ClaudeProvider(settings)
 
 
-def get_provider(settings: Settings | None = None) -> LLMProvider:
-    from ats_ai.providers.claude_provider import ClaudeProvider
-
-    return ClaudeProvider(settings or get_settings())
+__all__ = ["BaseProvider", "ClaudeProvider", "ProviderError", "get_provider"]
