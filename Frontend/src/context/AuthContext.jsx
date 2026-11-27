@@ -1,58 +1,60 @@
 import { createContext, useCallback, useEffect, useMemo, useState } from "react";
-import { loginApi, signupApi, meApi, logoutApi } from "../api/authApi";
-import { tokenStorage } from "../utils/tokenStorage";
+import { api, AUTH_EXPIRED_EVENT, tokenStorage } from "../services";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true); // true while checking the saved token
+  // only "loading" while we check a saved token with GET /api/auth/me
+  const [loading, setLoading] = useState(() => !!tokenStorage.getAccess());
   const [sessionExpired, setSessionExpired] = useState(false);
 
-  // on app start: if a token exists, load the user
   useEffect(() => {
-    if (!tokenStorage.getAccess()) {
-      setLoading(false);
-      return;
-    }
-    meApi()
-      .then(setUser)
-      .catch(() => tokenStorage.clear())
-      .finally(() => setLoading(false));
+    if (!tokenStorage.getAccess()) return;
+    let active = true;
+    api
+      .me()
+      .then((u) => active && setUser(u))
+      .catch((err) => {
+        // a dead token is removed; a network hiccup keeps it for the next reload
+        if (err?.status === 401) tokenStorage.clear();
+      })
+      .finally(() => active && setLoading(false));
+    return () => {
+      active = false;
+    };
   }, []);
 
-  // axios tells us when the refresh failed
+  // request.js fires this when the refresh token is rejected too
   useEffect(() => {
     const onExpired = () => {
       setUser(null);
       setSessionExpired(true);
     };
-    window.addEventListener("auth:expired", onExpired);
-    return () => window.removeEventListener("auth:expired", onExpired);
+    window.addEventListener(AUTH_EXPIRED_EVENT, onExpired);
+    return () => window.removeEventListener(AUTH_EXPIRED_EVENT, onExpired);
   }, []);
 
-  const handleAuthSuccess = useCallback((data) => {
-    tokenStorage.set(data);
+  const finishAuth = useCallback((data, remember) => {
+    tokenStorage.set(data, remember);
     setUser(data.user);
     setSessionExpired(false);
     return data.user;
   }, []);
 
   const login = useCallback(
-    async (email, password) => handleAuthSuccess(await loginApi(email, password)),
-    [handleAuthSuccess]
+    async (email, password, remember = true) => finishAuth(await api.login(email, password), remember),
+    [finishAuth]
   );
 
-  const signup = useCallback(
-    async (form) => handleAuthSuccess(await signupApi(form)),
-    [handleAuthSuccess]
-  );
+  const signup = useCallback(async (form) => finishAuth(await api.signup(form), true), [finishAuth]);
 
   const logout = useCallback(async () => {
-    await logoutApi();
+    await api.logout();
     tokenStorage.clear();
     setUser(null);
+    setSessionExpired(false);
   }, []);
 
   const value = useMemo(

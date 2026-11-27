@@ -1,15 +1,13 @@
-import { useState } from "react";
-import HistoryPage from "./page/HistoryPage";
-import SettingsPage from "./page/SettingsPage";
+import { useEffect } from "react";
+import AppRoutes from "./routes/AppRoutes";
+import { api } from "./services";
+import { USE_MOCK } from "./config";
 
 export default function App() {
-  const [page, setPage] = useState("history");
-  return (
-    <>
-    <HistoryPage/>
-    <SettingsPage/>
-    </>
-  );
-}
+  // GET /api/warm wakes the Render + Neon backend so the first real call isn't slow
+  useEffect(() => {
+    if (!USE_MOCK) api.warm().catch(() => {});
+  }, []);
 
-export default App
+  return <AppRoutes />;
+}

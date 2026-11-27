@@ -1,23 +1,20 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { Loader2 } from "lucide-react";
+import { PageSpinner } from "../components/ui/Spinner";
 import { useAuth } from "../hooks/useAuth";
+import { loginUrlForPath } from "../lib/intent";
 
+// Guests are sent to login with the intent of the page they tried to open:
+//   /history  -> /login?intent=history
+//   /settings -> /login?intent=settings
+//   other     -> /login?next=<path>
 export default function ProtectedRoute() {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading, sessionExpired } = useAuth();
   const location = useLocation();
 
-  // wait until the saved token has been checked
-  if (loading) {
-    return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <Loader2 className="h-6 w-6 animate-spin text-primary-600" />
-      </div>
-    );
-  }
+  if (loading) return <PageSpinner label="Checking your session…" />;
 
   if (!isAuthenticated) {
-    // remember where the user wanted to go; login sends them back there
-    return <Navigate to="/login" replace state={{ from: location }} />;
+    return <Navigate to={loginUrlForPath(location.pathname, location.search, sessionExpired)} replace />;
   }
 
   return <Outlet />;

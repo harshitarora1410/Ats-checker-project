@@ -1,23 +1,37 @@
 import { createContext, useCallback, useMemo, useState } from "react";
-import { createAnalysisApi } from "../api/analysesApi";
-import { getErrorMessage } from "../utils/errors";
+import { api } from "../services";
+import { getErrorMessage } from "../lib/errors";
 
-// Holds the JD + resumes the user picked on the main page.
-// File objects can't go in localStorage, so they live here in memory.
-// This is what lets the files survive the "go to login, then come back" step.
+// The JD + resumes picked on the main page (P1).
+// File objects can't be saved to localStorage, so they live here in memory —
+// that is what lets them survive the "Score Resumes -> login -> back" round trip.
 // eslint-disable-next-line react-refresh/only-export-components
 export const AnalysisDraftContext = createContext(null);
+
+// "Senior Frontend Engineer — Northwind Labs\n..." -> "Senior Frontend Engineer"
+const titleFromText = (text = "") => {
+  const first = text
+    .split(/\r?\n/)
+    .map((l) => l.replace(/^[\s•*#-]+/, "").trim())
+    .find(Boolean);
+  if (!first) return "";
+  const head = first.split(/\s[—–|]\s|\s-\s/)[0].trim();
+  return head.length <= 80 ? head : "";
+};
+
+const titleFromFile = (file) =>
+  file ? file.name.replace(/\.[^.]+$/, "").replace(/[_-]+/g, " ").replace(/\b(jd|job description)\b/gi, "").trim() : "";
 
 export function AnalysisDraftProvider({ children }) {
   const [jdTitle, setJdTitle] = useState("");
   const [jdText, setJdText] = useState("");
   const [jdFile, setJdFile] = useState(null);
   const [resumes, setResumes] = useState([]);
-
-  // true when a logged-out user pressed "Score Resumes" -> submit right after login
-  const [pendingSubmit, setPendingSubmit] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
+
+  const jdReady = jdText.trim().length > 0 || !!jdFile;
+  const isReady = jdReady && resumes.length > 0;
 
   const clearDraft = useCallback(() => {
     setJdTitle("");
@@ -27,22 +41,27 @@ export function AnalysisDraftProvider({ children }) {
     setSubmitError("");
   }, []);
 
-  // returns the job_id, throws on failure
-  const submitAnalysis = useCallback(async () => {
-    setSubmitting(true);
-    setSubmitError("");
-    try {
-      const data = await createAnalysisApi({ jdTitle, jdText, jdFile, resumes });
-      clearDraft();
-      return data.job_id;
-    } catch (err) {
-      setSubmitError(getErrorMessage(err, "Could not start the analysis"));
-      throw err;
-    } finally {
-      setPendingSubmit(false);
-      setSubmitting(false);
-    }
-  }, [jdTitle, jdText, jdFile, resumes, clearDraft]);
+  // Creates the analysis and returns its job_id. Throws on failure (message in submitError).
+  const submit = useCallback(
+    async ({ provider, sectionWeights } = {}) => {
+      setSubmitting(true);
+      setSubmitError("");
+      try {
+        const title = jdTitle.trim() || titleFromText(jdText) || titleFromFile(jdFile);
+        // 202 { job_id, status, total_resumes }; status may already be "failed"
+        // if every resume failed text extraction — the analyzing page explains that
+        const data = await api.createAnalysis({ jdTitle: title, jdText, jdFile, resumes, provider, sectionWeights });
+        clearDraft();
+        return data.job_id;
+      } catch (err) {
+        setSubmitError(getErrorMessage(err, "Could not start the analysis"));
+        throw err;
+      } finally {
+        setSubmitting(false);
+      }
+    },
+    [jdTitle, jdText, jdFile, resumes, clearDraft]
+  );
 
   const value = useMemo(
     () => ({
@@ -50,11 +69,11 @@ export function AnalysisDraftProvider({ children }) {
       jdText, setJdText,
       jdFile, setJdFile,
       resumes, setResumes,
-      pendingSubmit, setPendingSubmit,
+      jdReady, isReady,
       submitting, submitError, setSubmitError,
-      clearDraft, submitAnalysis,
+      clearDraft, submit,
     }),
-    [jdTitle, jdText, jdFile, resumes, pendingSubmit, submitting, submitError, clearDraft, submitAnalysis]
+    [jdTitle, jdText, jdFile, resumes, jdReady, isReady, submitting, submitError, clearDraft, submit]
   );
 
   return <AnalysisDraftContext.Provider value={value}>{children}</AnalysisDraftContext.Provider>;
