@@ -3,9 +3,9 @@ import Navbar from "./Navbar";
 
 export default function AppLayout() {
   return (
-    <div className="min-h-screen bg-canvas">
+    <div className="flex min-h-screen flex-col bg-canvas">
       <Navbar />
-      <main>
+      <main className="page-wash flex-1">
         <Outlet />
       </main>
     </div>
