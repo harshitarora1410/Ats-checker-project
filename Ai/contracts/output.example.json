@@ -1,0 +1,159 @@
+{
+  "contract_version": "1.0",
+  "job_id": "6f1c2a9e-3b4d-4e5f-8a7b-1c2d3e4f5a6b",
+  "status": "partially_failed",
+  "model_used": "claude-haiku-5-5",
+  "section_weights": {
+    "skills": 35,
+    "experience": 35,
+    "education": 15,
+    "certifications": 15
+  },
+  "total_resumes": 3,
+  "succeeded": 2,
+  "failed": 1,
+  "results": [
+    {
+      "resume_id": "a1b2c3d4-0001-4000-8000-000000000001",
+      "rank": 1,
+      "status": "done",
+      "error_message": null,
+      "candidate_name": "Rahul Sharma",
+      "overall_score": 77.05,
+      "verdict": "strong",
+      "summary": "Strong match: 4 years of Python backend work with FastAPI and PostgreSQL. Missing AWS and a cloud certification.",
+      "section_scores": {
+        "skills": 88,
+        "experience": 85,
+        "education": 90,
+        "certifications": 20
+      },
+      "details": {
+        "skills": {
+          "matched": [
+            "Python",
+            "FastAPI",
+            "Django",
+            "PostgreSQL",
+            "REST APIs",
+            "Git",
+            "Docker",
+            "Redis"
+          ],
+          "missing": [
+            "AWS"
+          ],
+          "reasoning": "Has every required skill and 2 of 3 preferred skills; AWS is missing."
+        },
+        "experience": {
+          "matched": [
+            "4 years Python backend experience",
+            "Built 12 REST APIs with FastAPI and PostgreSQL"
+          ],
+          "missing": [],
+          "reasoning": "Exceeds the 3+ years requirement with directly relevant API work."
+        },
+        "education": {
+          "matched": [
+            "B.Tech in Computer Science"
+          ],
+          "missing": [],
+          "reasoning": "Matches the required degree."
+        },
+        "certifications": {
+          "matched": [],
+          "missing": [
+            "AWS Certified Developer or any cloud certification"
+          ],
+          "reasoning": "No certifications listed; the JD prefers a cloud certification."
+        },
+        "recommendations": [
+          "Add any AWS experience, even from personal projects",
+          "Consider the AWS Certified Developer certification",
+          "Mention the number of users or requests your APIs handle in every role"
+        ]
+      },
+      "report_text": "ATS REPORT - Rahul Sharma\nOverall: 77.05/100 (Strong fit)\n\nSkills 88 | Experience 85 | Education 90 | Certifications 20\n\nStrengths: all required skills, 4 years of FastAPI/PostgreSQL API work.\nGaps: AWS, cloud certification.\n\nRecommendations:\n1. Add AWS experience\n2. Get a cloud certification\n3. Quantify impact in every role"
+    },
+    {
+      "resume_id": "a1b2c3d4-0002-4000-8000-000000000002",
+      "rank": 2,
+      "status": "done",
+      "error_message": null,
+      "candidate_name": "Priya Verma",
+      "overall_score": 34.0,
+      "verdict": "weak",
+      "summary": "Weak match: Python and SQL from data analysis, but no backend, API or framework experience.",
+      "section_scores": {
+        "skills": 40,
+        "experience": 25,
+        "education": 45,
+        "certifications": 30
+      },
+      "details": {
+        "skills": {
+          "matched": [
+            "Python",
+            "SQL"
+          ],
+          "missing": [
+            "FastAPI or Django",
+            "PostgreSQL",
+            "REST API design",
+            "Git",
+            "Docker",
+            "AWS",
+            "Redis or Celery"
+          ],
+          "reasoning": "Has 2 of 5 required skills; no backend framework."
+        },
+        "experience": {
+          "matched": [
+            "Python scripting and SQL queries"
+          ],
+          "missing": [
+            "3+ years Python backend development"
+          ],
+          "reasoning": "Under 2 years, in data analysis rather than backend development."
+        },
+        "education": {
+          "matched": [
+            "B.Sc in Mathematics"
+          ],
+          "missing": [
+            "B.Tech / B.E. in Computer Science"
+          ],
+          "reasoning": "Related field but not the required degree."
+        },
+        "certifications": {
+          "matched": [
+            "Google Data Analytics Certificate"
+          ],
+          "missing": [
+            "Cloud certification"
+          ],
+          "reasoning": "Has a certification, but not a cloud one."
+        },
+        "recommendations": [
+          "Build and list a FastAPI + PostgreSQL project",
+          "Add Git and REST API work to the skills section",
+          "Highlight any automation or API work from the analyst role"
+        ]
+      },
+      "report_text": "ATS REPORT - Priya Verma\nOverall: 34.0/100 (Weak fit)\n\nSkills 40 | Experience 25 | Education 45 | Certifications 30\n\nStrengths: Python, SQL.\nGaps: backend framework, REST APIs, PostgreSQL, 3+ years backend experience.\n\nRecommendations:\n1. Build a FastAPI project\n2. Add Git and REST API skills\n3. Highlight API or automation work"
+    },
+    {
+      "resume_id": "a1b2c3d4-0003-4000-8000-000000000003",
+      "rank": null,
+      "status": "failed",
+      "error_message": "Resume text is empty",
+      "candidate_name": null,
+      "overall_score": null,
+      "verdict": null,
+      "summary": null,
+      "section_scores": null,
+      "details": null,
+      "report_text": null
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "contract_version": "1.0",
+  "job_id": "6f1c2a9e-3b4d-4e5f-8a7b-1c2d3e4f5a6b",
+  "jd_text": "Python Backend Developer (3+ years)\n\nAbout the role:\nWe are hiring a Python Backend Developer to build REST APIs for our HR products.\n\nRequired skills:\n- Python (3+ years)\n- FastAPI or Django\n- PostgreSQL and SQL\n- REST API design\n- Git\n\nPreferred skills:\n- Docker\n- AWS\n- Redis or Celery\n\nEducation:\n- B.Tech / B.E. in Computer Science or a related field\n\nCertifications (preferred):\n- AWS Certified Developer or any cloud certification",
+  "section_weights": {
+    "skills": 35,
+    "experience": 35,
+    "education": 15,
+    "certifications": 15
+  },
+  "resumes": [
+    {
+      "resume_id": "a1b2c3d4-0001-4000-8000-000000000001",
+      "resume_text": "Rahul Sharma\nrahul.sharma@example.com | +91 90000 00001\n\nSUMMARY\nBackend developer with 4 years of experience building Python APIs.\n\nEXPERIENCE\nSoftware Engineer, Infotech Solutions (2022 - Present)\n- Built 12 REST APIs with FastAPI and PostgreSQL serving 50K daily users\n- Reduced API response time by 40% using Redis caching\n\nJunior Developer, WebCraft (2021 - 2022)\n- Developed Django modules for an HR portal\n\nSKILLS\nPython, FastAPI, Django, PostgreSQL, Redis, Docker, Git, REST APIs\n\nEDUCATION\nB.Tech in Computer Science, ABC Institute of Technology, 2021\n\nCERTIFICATIONS\nNone"
+    },
+    {
+      "resume_id": "a1b2c3d4-0002-4000-8000-000000000002",
+      "resume_text": "Priya Verma\npriya.verma@example.com\n\nEXPERIENCE\nData Analyst, Insight Corp (2023 - Present)\n- Wrote Python scripts and SQL queries for weekly reports\n\nSKILLS\nPython, Pandas, SQL, Excel, Power BI\n\nEDUCATION\nB.Sc in Mathematics, XYZ University, 2023\n\nCERTIFICATIONS\nGoogle Data Analytics Certificate"
+    },
+    {
+      "resume_id": "a1b2c3d4-0003-4000-8000-000000000003",
+      "resume_text": "   "
+    }
+  ]
+}
