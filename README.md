@@ -22,7 +22,7 @@ An AI-powered Applicant Tracking System (ATS) score checker built for **Algowork
 
 | Layer | Technology |
 |-------|-----------|
-| Frontend | React / Next.js, Tailwind CSS |
+| Frontend | React , Tailwind CSS |
 | Backend | Python, FastAPI |
 | Database | PostgreSQL |
 | AI integration | Claude API / Gemini API (provider abstraction) |
