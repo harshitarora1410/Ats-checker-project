@@ -4,60 +4,7 @@ import ScoreCircle from '../components/ScoreCircle'
 import VerdictBadge from '../components/VerdictBadge'
 import ProgressBar from '../components/ProgressBar'
 
-// ── Mock data ──────────────────────────────────────────────────────────────────
-const RESULTS = [
-  {
-    rank: 1, name: 'Aarav Mehta',    file: 'Aarav_Mehta_Resume.pdf',
-    verdict: 'strong',   score: 92,
-    sections: { Skills: 96, Experience: 93, Education: 88, Certifications: 86 },
-    matched: ['React', 'TypeScript', '6 yrs exp', 'GraphQL', 'AWS Certified'],
-    missing: ['Playwright'],
-  },
-  {
-    rank: 2, name: 'Sofia Martinez', file: 'Sofia_Martinez_CV.docx',
-    verdict: 'strong',   score: 81,
-    sections: { Skills: 86, Experience: 82, Education: 80, Certifications: 60 },
-    matched: ['React', 'Redux', '5 yrs exp', 'B.Sc CS'],
-    missing: ['AWS Certification', 'GraphQL'],
-  },
-  {
-    rank: 3, name: 'Daniel Kim',     file: 'Daniel_Kim_Resume.pdf',
-    verdict: 'moderate', score: 68,
-    sections: { Skills: 74, Experience: 62, Education: 80, Certifications: 40 },
-    matched: ['React', 'Jest', '4 yrs exp'],
-    missing: ['TypeScript', 'AWS Certification'],
-  },
-  {
-    rank: 4, name: 'Emily Chen',     file: 'Emily_Chen_2025.doc',
-    verdict: 'moderate', score: 55,
-    sections: { Skills: 60, Experience: 48, Education: 75, Certifications: 30 },
-    matched: ['JavaScript', 'Vue', 'B.Sc IT'],
-    missing: ['React', '5+ yrs exp', 'AWS'],
-  },
-  {
-    rank: 5, name: 'Marcus Johnson', file: 'Marcus_Johnson.txt',
-    verdict: 'weak',     score: 38,
-    sections: { Skills: 40, Experience: 35, Education: 50, Certifications: 10 },
-    matched: ['HTML/CSS', '2 yrs exp'],
-    missing: ['React', 'TypeScript', 'Degree in CS', 'AWS Certification'],
-  },
-]
-
-const FAILED = {
-  file: "Liam_Oconnor_Resume.pdf",
-  message: "The file appears to be a scanned image with no readable text. Upload a text-based PDF or DOCX to score this candidate.",
-}
-
-const STAT_CARDS = [
-  { label: 'Top score',    value: '92/100', color: 'text-blue-600'  },
-  { label: 'Strong fit',   value: '4',      color: 'text-green-600' },
-  { label: 'Moderate fit', value: '4',      color: 'text-amber-600' },
-  { label: 'Weak fit',     value: '3',      sub: '+ 1 failed', color: 'text-red-600' },
-]
-
-const FILTER_TABS = ['All 12', 'Strong', 'Moderate', 'Weak']
-
-// ── Chip ──────────────────────────────────────────────────────────────────────
+// ── Chip (matched / missing keywords) ─────────────────────────────────────────
 function Chip({ label, type }) {
   const styles = {
     matched: 'bg-green-50 text-green-700 border border-green-200',
@@ -71,55 +18,25 @@ function Chip({ label, type }) {
   )
 }
 
-// ── Candidate result card ──────────────────────────────────────────────────────
-function ResultCard({ candidate }) {
-  const borderColor = {
-    strong:   'border-l-green-400',
-    moderate: 'border-l-amber-400',
-    weak:     'border-l-red-400',
-  }
-
+// ── Partial failures banner ────────────────────────────────────────────────────
+function PartialFailureBanner({ failedCount }) {
   return (
-    <div className={`bg-white rounded-2xl border border-gray-200 border-l-4 ${borderColor[candidate.verdict]} p-5 hover:shadow-md transition-shadow`}>
-      <div className="flex gap-4">
-        <div className="shrink-0">
-          <ScoreCircle score={candidate.score} size="md" verdict={candidate.verdict} />
-        </div>
-
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs font-bold text-gray-300">#{candidate.rank}</span>
-            <h3 className="text-base font-bold text-gray-900 truncate">{candidate.name}</h3>
-            <VerdictBadge verdict={candidate.verdict} />
-          </div>
-          <p className="text-xs text-gray-400 truncate mb-3">{candidate.file}</p>
-
-          <div className="grid grid-cols-2 gap-x-6 gap-y-2 mb-3">
-            {Object.entries(candidate.sections).map(([key, val]) => (
-              <ProgressBar key={key} label={key} value={val} variant="section" />
-            ))}
-          </div>
-
-          <div className="flex flex-wrap gap-1.5">
-            <span className="text-[10px] font-semibold uppercase tracking-wide text-gray-400 mr-1">Matched</span>
-            {candidate.matched.map(tag => <Chip key={tag} label={tag} type="matched" />)}
-            <span className="text-[10px] font-semibold uppercase tracking-wide text-gray-400 mx-1">Missing</span>
-            {candidate.missing.map(tag => <Chip key={tag} label={tag} type="missing" />)}
-          </div>
-        </div>
-
-        <div className="shrink-0 flex items-start">
-          <button className="text-xs font-semibold text-blue-600 hover:underline whitespace-nowrap">
-            View details →
-          </button>
-        </div>
-      </div>
+    <div className="mb-4 flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
+      <svg className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+          d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <p className="text-xs text-amber-700">
+        <span className="font-semibold">{failedCount} resume{failedCount > 1 ? 's' : ''} could not be parsed</span> and
+        were excluded from scoring. The remaining results are shown below.
+      </p>
     </div>
   )
 }
 
-// ── Failed parse card ─────────────────────────────────────────────────────────
-function FailedCard() {
+// ── Failed resume card ─────────────────────────────────────────────────────────
+function FailedResumeCard({ resume }) {
+  const name = resume.candidate_name || resume.original_filename || 'Unknown file'
   return (
     <div className="bg-white rounded-2xl border border-red-200 border-l-4 border-l-red-400 p-5">
       <div className="flex items-start gap-3">
@@ -130,13 +47,15 @@ function FailedCard() {
           </svg>
         </div>
         <div className="flex-1">
-          <div className="flex items-center gap-2 mb-1">
-            <p className="text-sm font-bold text-gray-900">{FAILED.file}</p>
+          <div className="flex items-center gap-2 mb-1 flex-wrap">
+            <p className="text-sm font-bold text-gray-900">{name}</p>
             <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-red-50 text-red-600 border border-red-200">
               Failed to parse
             </span>
           </div>
-          <p className="text-xs text-gray-500 mb-3">{FAILED.message}</p>
+          <p className="text-xs text-gray-500 mb-3">
+            {resume.error_message || 'This file could not be processed. Upload a text-based PDF or DOCX.'}
+          </p>
           <div className="flex gap-2">
             <button className="px-3 py-1.5 rounded-xl border border-gray-200 text-xs font-semibold text-gray-600 hover:bg-gray-50 transition-colors">
               Retry
@@ -145,6 +64,81 @@ function FailedCard() {
               Replace file
             </button>
           </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ── Successful candidate card ──────────────────────────────────────────────────
+function ResultCard({ candidate }) {
+  const borderColor = {
+    strong:   'border-l-green-400',
+    moderate: 'border-l-amber-400',
+    weak:     'border-l-red-400',
+  }
+
+  // Map API section shape → { label, score, matched[], missing[] }
+  const sections = [
+    { key: 'Skills',         data: candidate.sections?.skills         },
+    { key: 'Experience',     data: candidate.sections?.experience     },
+    { key: 'Education',      data: candidate.sections?.education      },
+    { key: 'Certifications', data: candidate.sections?.certifications },
+  ].filter(s => s.data != null)
+
+  const allMatched = sections.flatMap(s => s.data.matched ?? [])
+  const allMissing = sections.flatMap(s => s.data.missing ?? [])
+
+  const displayName = candidate.candidate_name || candidate.original_filename || `Candidate #${candidate.rank}`
+
+  return (
+    <div className={`bg-white rounded-2xl border border-gray-200 border-l-4 ${borderColor[candidate.verdict] ?? 'border-l-gray-300'} p-5 hover:shadow-md transition-shadow`}>
+      <div className="flex gap-4">
+        {/* Score circle */}
+        <div className="shrink-0">
+          <ScoreCircle score={candidate.overall_score ?? 0} size="md" verdict={candidate.verdict} />
+        </div>
+
+        {/* Middle */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-1 flex-wrap">
+            <span className="text-xs font-bold text-gray-300">#{candidate.rank}</span>
+            <h3 className="text-base font-bold text-gray-900 truncate">{displayName}</h3>
+            <VerdictBadge verdict={candidate.verdict} />
+          </div>
+          <p className="text-xs text-gray-400 truncate mb-3">{candidate.original_filename}</p>
+
+          {/* Section progress bars */}
+          <div className="grid grid-cols-2 gap-x-6 gap-y-2 mb-3">
+            {sections.map(({ key, data }) => (
+              <ProgressBar key={key} label={key} value={data.score ?? 0} variant="section" />
+            ))}
+          </div>
+
+          {/* Matched / Missing chips */}
+          {(allMatched.length > 0 || allMissing.length > 0) && (
+            <div className="flex flex-wrap gap-1.5">
+              {allMatched.length > 0 && (
+                <>
+                  <span className="text-[10px] font-semibold uppercase tracking-wide text-gray-400 mr-1 self-center">Matched</span>
+                  {allMatched.map((tag, i) => <Chip key={`m-${i}`} label={tag} type="matched" />)}
+                </>
+              )}
+              {allMissing.length > 0 && (
+                <>
+                  <span className="text-[10px] font-semibold uppercase tracking-wide text-gray-400 mx-1 self-center">Missing</span>
+                  {allMissing.map((tag, i) => <Chip key={`x-${i}`} label={tag} type="missing" />)}
+                </>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* View details */}
+        <div className="shrink-0 flex items-start">
+          <button className="text-xs font-semibold text-blue-600 hover:underline whitespace-nowrap">
+            View details →
+          </button>
         </div>
       </div>
     </div>
@@ -173,18 +167,54 @@ function EmptyState({ onNewAnalysis }) {
   )
 }
 
-// ── Page 4 — Results ──────────────────────────────────────────────────────────
-export default function ResultsPage({ onNewAnalysis }) {
+// ── Page 4 — Results (live API data) ─────────────────────────────────────────
+export default function ResultsPage({ analysisData, onNewAnalysis }) {
   const [search,       setSearch]  = useState('')
-  const [activeFilter, setFilter]  = useState('All 12')
+  const [activeFilter, setFilter]  = useState('All')
+
+  // ── Unpack API response ──────────────────────────────────────────────────
+  const jdTitle   = analysisData?.jd_title   ?? 'Results'
+  const modelUsed = analysisData?.model_used ?? 'Claude'
+  const progress  = analysisData?.progress   ?? {}
+  const resumes   = analysisData?.resumes    ?? []
+
+  const topScore     = progress.top_score      ?? '—'
+  const strongCount  = progress.strong_count   ?? 0
+  const moderateCount= progress.moderate_count ?? 0
+  const weakCount    = progress.weak_count     ?? 0
+  const failedCount  = progress.failed_count   ?? 0
+  const totalCount   = resumes.length
+  const hasPartialFailures = !!analysisData?.progress?.has_partial_failures
+
+  // Split scored vs failed resumes
+  const scoredResumes = resumes.filter(r => r.status !== 'failed' && r.rank != null)
+  const failedResumes = resumes.filter(r => r.status === 'failed'  || r.rank == null)
+
+  // Filter tabs count label
+  const totalLabel = `All ${totalCount}`
+  const FILTER_TABS = [totalLabel, 'Strong', 'Moderate', 'Weak']
 
   const verdictMap = { Strong: 'strong', Moderate: 'moderate', Weak: 'weak' }
 
-  const filtered = RESULTS.filter(c => {
-    const matchSearch = c.name.toLowerCase().includes(search.toLowerCase())
-    const matchFilter = activeFilter === 'All 12' || c.verdict === verdictMap[activeFilter]
+  const filtered = scoredResumes.filter(c => {
+    const matchSearch = (c.candidate_name || c.original_filename || '')
+      .toLowerCase().includes(search.toLowerCase())
+    const matchFilter = activeFilter === totalLabel || c.verdict === verdictMap[activeFilter]
     return matchSearch && matchFilter
   })
+
+  // Distribution bar widths
+  const dist = strongCount + moderateCount + weakCount || 1
+  const strongPct   = Math.round((strongCount   / dist) * 100)
+  const moderatePct = Math.round((moderateCount / dist) * 100)
+  const weakPct     = 100 - strongPct - moderatePct
+
+  const statCards = [
+    { label: 'Top score',    value: topScore !== '—' ? `${topScore}/100` : '—', color: 'text-blue-600'  },
+    { label: 'Strong fit',   value: String(strongCount),                         color: 'text-green-600' },
+    { label: 'Moderate fit', value: String(moderateCount),                       color: 'text-amber-600' },
+    { label: 'Weak fit',     value: String(weakCount), sub: failedCount > 0 ? `+ ${failedCount} failed` : null, color: 'text-red-600' },
+  ]
 
   return (
     <div className="flex min-h-screen bg-[#F3F4F6]">
@@ -195,19 +225,19 @@ export default function ResultsPage({ onNewAnalysis }) {
         <div className="flex items-start justify-between mb-6">
           <div>
             <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-1">
-              Northwind Labs · Engineering
+              Analysis Results
             </p>
-            <h1 className="text-2xl font-bold text-gray-900 mb-1">Senior Frontend Engineer</h1>
-            <div className="flex items-center gap-3 text-xs text-gray-400">
+            <h1 className="text-2xl font-bold text-gray-900 mb-1">{jdTitle}</h1>
+            <div className="flex items-center gap-3 text-xs text-gray-400 flex-wrap">
               <span>Scored with</span>
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-orange-50 border border-orange-200 text-orange-700 font-semibold">
-                <span className="w-3.5 h-3.5 rounded bg-orange-200 inline-flex items-center justify-center text-[9px] font-bold">C</span>
-                Claude
+                <span className="w-3.5 h-3.5 rounded bg-orange-200 inline-flex items-center justify-center text-[9px] font-bold">
+                  {modelUsed?.charAt(0) ?? 'C'}
+                </span>
+                {modelUsed}
               </span>
               <span>·</span>
-              <span>12 resumes scored</span>
-              <span>·</span>
-              <span>Today, 10:42 AM</span>
+              <span>{totalCount} resumes scored</span>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -228,9 +258,12 @@ export default function ResultsPage({ onNewAnalysis }) {
           </div>
         </div>
 
+        {/* ── Partial failures banner ── */}
+        {hasPartialFailures && <PartialFailureBanner failedCount={failedCount} />}
+
         {/* ── Stat cards ── */}
         <div className="grid grid-cols-4 gap-4 mb-6">
-          {STAT_CARDS.map(card => (
+          {statCards.map(card => (
             <div key={card.label} className="bg-white rounded-2xl border border-gray-200 px-5 py-4 shadow-sm">
               <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-1">{card.label}</p>
               <p className={`text-2xl font-bold ${card.color}`}>{card.value}</p>
@@ -250,17 +283,19 @@ export default function ResultsPage({ onNewAnalysis }) {
             </div>
           </div>
           <div className="flex h-3 rounded-full overflow-hidden gap-0.5">
-            <div className="bg-green-500 rounded-l-full" style={{ width: '33.3%' }} />
-            <div className="bg-amber-500"               style={{ width: '33.3%' }} />
-            <div className="bg-red-500 rounded-r-full"  style={{ width: '33.4%' }} />
+            <div className="bg-green-500 rounded-l-full" style={{ width: `${strongPct}%` }} />
+            <div className="bg-amber-500"               style={{ width: `${moderatePct}%` }} />
+            <div className="bg-red-500 rounded-r-full"  style={{ width: `${weakPct}%` }} />
           </div>
         </div>
 
         {/* ── Search + filter + download ── */}
         <div className="flex items-center gap-4 mb-4 flex-wrap">
           <div className="relative flex-1 min-w-[200px] max-w-xs">
-            <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
+              fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
             <input type="text" placeholder="Search candidates by name…"
               value={search} onChange={e => setSearch(e.target.value)}
@@ -299,17 +334,27 @@ export default function ResultsPage({ onNewAnalysis }) {
               d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
           Scores are AI-assisted recommendations. Always review candidates before making hiring decisions.&nbsp;
-          AI model: <span className="font-semibold text-gray-600 ml-1">Claude</span>
+          AI model: <span className="font-semibold text-gray-600 ml-1">{modelUsed}</span>
         </div>
 
-        {/* ── Results ── */}
+        {/* ── Results list ── */}
         <div className="space-y-4">
-          {filtered.length === 0 ? (
+          {scoredResumes.length === 0 ? (
             <EmptyState onNewAnalysis={onNewAnalysis} />
+          ) : filtered.length === 0 ? (
+            <div className="bg-white rounded-2xl border border-gray-200 p-10 text-center text-sm text-gray-400">
+              No candidates match your search or filter.
+            </div>
           ) : (
-            filtered.map(c => <ResultCard key={c.rank} candidate={c} />)
+            filtered.map((c, i) => <ResultCard key={c.resume_id ?? c.rank ?? i} candidate={c} />)
           )}
-          {(activeFilter === 'All 12' || activeFilter === 'Weak') && <FailedCard />}
+
+          {/* Failed resume cards — always shown if present */}
+          {(activeFilter === totalLabel || activeFilter === 'Weak') &&
+            failedResumes.map((r, i) => (
+              <FailedResumeCard key={r.resume_id ?? `failed-${i}`} resume={r} />
+            ))
+          }
         </div>
       </main>
     </div>
